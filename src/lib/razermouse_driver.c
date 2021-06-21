@@ -1697,6 +1697,12 @@ ushort razer_attr_read_poll_rate(IOUSBDeviceInterface **usb_dev)
             report.transaction_id.id = 0x3f;
             break;
 
+        case USB_DEVICE_ID_RAZER_VIPER_8KHZ:
+            report = razer_chroma_misc_get_polling_rate2();
+            report.transaction_id.id = 0x1f;
+            break;
+
+
         case USB_DEVICE_ID_RAZER_NAGA_LEFT_HANDED_2020:
         case USB_DEVICE_ID_RAZER_ATHERIS_RECEIVER:
         case USB_DEVICE_ID_RAZER_BASILISK_V2:
@@ -1709,17 +1715,39 @@ ushort razer_attr_read_poll_rate(IOUSBDeviceInterface **usb_dev)
     } else {
         response_report = razer_send_payload(usb_dev, &report);
     }
-
-    switch(response_report.arguments[0]) {
-        case 0x01:
-            polling_rate = 1000;
-            break;
-        case  0x02:
-            polling_rate = 500;
-            break;
-        case  0x08:
-            polling_rate = 125;
-            break;
+    if (product == USB_DEVICE_ID_RAZER_VIPER_8KHZ) {
+        switch(response_report.arguments[1]) {
+            case 0x40:
+                polling_rate =  125;
+                break;
+            case 0x10:
+                polling_rate =  500;
+                break;
+            case 0x08:
+                polling_rate = 1000;
+                break;
+            case 0x04:
+                polling_rate = 2000;
+                break;
+            case 0x02:
+                polling_rate = 4000;
+                break;
+            case 0x01:
+                polling_rate = 8000;
+                break;
+        }
+    } else {
+        switch(response_report.arguments[0]) {
+            case 0x01:
+                polling_rate = 1000;
+                break;
+            case  0x02:
+                polling_rate = 500;
+                break;
+            case  0x08:
+                polling_rate = 125;
+                break;
+        }
     }
 
     return polling_rate;
@@ -1765,6 +1793,11 @@ void razer_attr_write_poll_rate(IOUSBDeviceInterface **usb_dev, ushort polling_r
         case USB_DEVICE_ID_RAZER_OROCHI_2011:
             orochi2011_poll = polling_rate;
             report = razer_chroma_misc_set_orochi2011_poll_dpi(orochi2011_poll, orochi2011_dpi, orochi2011_dpi);
+            break;
+
+        case USB_DEVICE_ID_RAZER_VIPER_8KHZ:
+            report = razer_chroma_misc_set_polling_rate2(polling_rate);
+            report.transaction_id.id = 0x1f;
             break;
 
         case USB_DEVICE_ID_RAZER_NAGA_HEX_V2:

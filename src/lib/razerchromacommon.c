@@ -1013,6 +1013,11 @@ struct razer_report razer_chroma_misc_get_polling_rate(void)
     return get_razer_report(0x00, 0x85, 0x01);
 }
 
+struct razer_report razer_chroma_misc_get_polling_rate2(void)
+{
+    return get_razer_report(0x00, 0xC0, 0x01);
+}
+
 /**
  * Set the polling rate of the device
  *
@@ -1036,6 +1041,47 @@ struct razer_report razer_chroma_misc_set_polling_rate(unsigned short polling_ra
         break;
     default: // 500Hz
         report.arguments[0] = 0x02;
+        break;
+    }
+
+    return report;
+}
+
+
+/**
+ * Set the polling rate of the device
+ *
+ * 0x40 =  125 Hz
+ * 0x10 =  500 Hz
+ * 0x08 = 1000 Hz
+ * 0x04 = 2000 Hz
+ * 0x02 = 4000 Hz
+ * 0x01 = 8000 Hz
+ */
+struct razer_report razer_chroma_misc_set_polling_rate2(unsigned short polling_rate)
+{
+    struct razer_report report = get_razer_report(0x00, 0x40, 0x02);
+
+    report.arguments[0] = 0x00; // TODO Razer sends each request once with 0x00 and once with 0x01 - maybe varstore?
+
+    switch(polling_rate) {
+    case 8000:
+        report.arguments[1] = 0x01;
+        break;
+    case 4000:
+        report.arguments[1] = 0x02;
+        break;
+    case 2000:
+        report.arguments[1] = 0x04;
+        break;
+    case 1000:
+        report.arguments[1] = 0x08;
+        break;
+    case 125:
+        report.arguments[1] = 0x40;
+        break;
+    default: // 500Hz
+        report.arguments[1] = 0x10;
         break;
     }
 

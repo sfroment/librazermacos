@@ -105,7 +105,9 @@ struct razer_report razer_chroma_misc_get_charging_status(void);
 struct razer_report razer_chroma_misc_set_dock_charge_type(unsigned char charge_type);
 
 struct razer_report razer_chroma_misc_get_polling_rate(void);
+struct razer_report razer_chroma_misc_get_polling_rate2(void);
 struct razer_report razer_chroma_misc_set_polling_rate(unsigned short polling_rate);
+struct razer_report razer_chroma_misc_set_polling_rate2(unsigned short polling_rate);
 
 struct razer_report razer_chroma_misc_get_dock_brightness(void);
 struct razer_report razer_chroma_misc_set_dock_brightness(unsigned char brightness);
